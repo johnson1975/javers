@@ -1,8 +1,7 @@
-package org.javers.repository.jdbc;
+package org.javers.repository.sql;
 
 import org.javers.core.AbstractJaversBuilder;
-import org.javers.repository.jdbc.pico.JdbcJaversModule;
-import org.javers.repository.jdbc.schema.JaversSchemaManager;
+import org.javers.repository.sql.schema.JaversSchemaManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,20 +13,22 @@ import java.util.Arrays;
  *     <li/>by properties file, see {@link #configure(String)}
  *     <li/>programmatically using builder style methods
  * </ul>
+ *
+ * By default, builder creates h2 in-memory repository
+ *
  * @author bartosz walacik
  */
-@Deprecated
-public class JdbcDiffRepositoryBuilder extends AbstractJaversBuilder {
-    private static final Logger logger = LoggerFactory.getLogger(JdbcDiffRepositoryBuilder.class);
+public class SqlRepositoryBuilder extends AbstractJaversBuilder {
+    private static final Logger logger = LoggerFactory.getLogger(SqlRepositoryBuilder.class);
 
-    private JdbcRepositoryConfiguration jdbcConfiguration;
+    private SqlRepositoryConfiguration jdbcConfiguration;
 
-    private JdbcDiffRepositoryBuilder() {
-        jdbcConfiguration = new JdbcRepositoryConfiguration();
+    private SqlRepositoryBuilder() {
+        jdbcConfiguration = new SqlRepositoryConfiguration();
     }
 
-    public static JdbcDiffRepositoryBuilder jdbcDiffRepository() {
-        return new JdbcDiffRepositoryBuilder();
+    public static SqlRepositoryBuilder sqlDiffRepository() {
+        return new SqlRepositoryBuilder();
     }
 
     /**
@@ -41,45 +42,45 @@ public class JdbcDiffRepositoryBuilder extends AbstractJaversBuilder {
      * @param classpathName classpath resource name, ex. "configuration/jdbc-postgres.properties",
      *                      see {@link ClassLoader#getResourceAsStream(String)}
      */
-    public JdbcDiffRepositoryBuilder configure(String classpathName){
+    public SqlRepositoryBuilder configure(String classpathName){
         jdbcConfiguration.readProperties(classpathName);
         return this;
     }
 
-    public JdbcDiffRepositoryBuilder withDialect(DialectName dialect) {
+    public SqlRepositoryBuilder withDialect(DialectName dialect) {
         jdbcConfiguration.withDialect(dialect);
         return this;
     }
 
-    public JdbcDiffRepositoryBuilder withDatabaseUrl(String databaseUrl) {
+    public SqlRepositoryBuilder withDatabaseUrl(String databaseUrl) {
         jdbcConfiguration.withDatabaseUrl(databaseUrl);
         return this;
     }
 
-    public JdbcDiffRepositoryBuilder withUsername(String username) {
+    public SqlRepositoryBuilder withUsername(String username) {
         jdbcConfiguration.withUsername(username);
         return this;
     }
 
-    public JdbcDiffRepositoryBuilder withPassword(String password) {
+    public SqlRepositoryBuilder withPassword(String password) {
         jdbcConfiguration.withPassword(password);
         return this;
     }
 
-    public JdbcDiffRepository build() {
-        logger.info("starting up JDBC repository module ...");
-        bootContainer(new JdbcJaversModule(),
+    public SqlRepository build() {
+        logger.info("starting up SQL repository module ...");
+        bootContainer(new JaversSqlModule(),
                       Arrays.asList(jdbcConfiguration.createConnectionPool(),
                                     jdbcConfiguration.getPollyDialect()));
 
-        createSchemaIfNotExists();
+        ensureSchema();
 
-        return getContainerComponent(JdbcDiffRepository.class);
+        return getContainerComponent(SqlRepository.class);
     }
 
-    private void createSchemaIfNotExists() {
+    private void ensureSchema() {
         JaversSchemaManager schemaManager = getContainerComponent(JaversSchemaManager.class);
-        schemaManager.createSchemaIfNotExists();
+        schemaManager.ensureSchema();
     }
 
     /**

@@ -1,4 +1,4 @@
-package org.javers.repository.jdbc;
+package org.javers.repository.sql;
 
 import org.javers.common.collections.Optional;
 import org.javers.core.commit.Commit;
@@ -12,8 +12,7 @@ import java.util.List;
 /**
  * @author bartosz walacik
  */
-@Deprecated
-public class JdbcDiffRepository implements JaversRepository {
+public class SqlRepository implements JaversRepository {
 
     @Override
     public List<CdoSnapshot> getStateHistory(GlobalCdoId globalCdoId, int limit) {

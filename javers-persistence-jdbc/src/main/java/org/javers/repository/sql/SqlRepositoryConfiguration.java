@@ -1,4 +1,4 @@
-package org.javers.repository.jdbc;
+package org.javers.repository.sql;
 
 import org.javers.common.properties.AbstractConfiguration;
 import org.javers.common.properties.PropertyConfiguration;
@@ -7,12 +7,12 @@ import org.polyjdbc.core.dialect.Dialect;
 
 import javax.sql.DataSource;
 
-import static org.javers.repository.jdbc.DataSourceFactory.*;
+import static org.javers.repository.sql.DataSourceFactory.createDBCP;
 
 /**
  * @author bartosz walacik
  */
-public class JdbcRepositoryConfiguration extends AbstractConfiguration {
+public class SqlRepositoryConfiguration extends AbstractConfiguration {
     public static final String DIALECT_PROPERTY =   "jdbc.dialect";
     public static final String URL_PROPERTY =       "jdbc.database.url";
     public static final String USERNAME_PROPERTY =  "jdbc.database.username";
@@ -23,7 +23,7 @@ public class JdbcRepositoryConfiguration extends AbstractConfiguration {
     private String username;
     private String password;
 
-    public JdbcRepositoryConfiguration() {
+    public SqlRepositoryConfiguration() {
         super(new PropertyConfiguration("jdbc-default.properties"));
         assemble();
     }

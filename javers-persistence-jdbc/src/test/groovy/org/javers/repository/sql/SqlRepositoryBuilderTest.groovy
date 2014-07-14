@@ -2,6 +2,9 @@ package org.javers.repository.jdbc;
 
 import org.apache.commons.dbcp.BasicDataSource;
 import org.javers.repository.jdbc.schema.FixedSchemaFactory
+import org.javers.repository.sql.SqlRepository
+import org.javers.repository.sql.SqlRepositoryBuilder
+import org.javers.repository.sql.schema.FixedSchemaFactory
 import org.polyjdbc.core.dialect.Dialect;
 import spock.lang.Specification;
 import javax.sql.DataSource;
@@ -14,23 +17,23 @@ import static org.javers.repository.jdbc.JdbcDiffRepositoryBuilder.*;
 /**
  * @author bartosz walacik
  */
-class JdbcDiffRepositoryBuilderTest extends Specification{
+class SqlRepositoryBuilderTest extends Specification{
 
-    def "should build jdbcDiffRepository with default H2 config"(){
+    def "should build SqlRepository with default H2 config"(){
         when:
-        JdbcDiffRepositoryBuilder builder = jdbcDiffRepository()
+        SqlRepositoryBuilder builder = SqlRepositoryBuilder.sqlDiffRepository()
         builder.build()
 
         then:
-        builder.getContainerComponent(JdbcDiffRepository.class) != null
-        builder.getContainerComponent(Dialect.class).getCode() == "H2"
-        builder.getContainerComponent(BasicDataSource.class).getUrl() == "jdbc:h2:mem:test"
+        builder.getContainerComponent(SqlRepository)
+        builder.getContainerComponent(Dialect).code == "H2"
+        builder.getContainerComponent(BasicDataSource).url == "jdbc:h2:mem:test"
     }
 
 
-    def "should create schema if not exists"() {
+    def "should create Commit table if not exists"() {
         when:
-        JdbcDiffRepositoryBuilder builder = jdbcDiffRepository()
+        SqlRepositoryBuilder builder = SqlRepositoryBuilder.sqlDiffRepository()
         builder.build()
 
         then:
@@ -38,7 +41,7 @@ class JdbcDiffRepositoryBuilderTest extends Specification{
         1 == queryForInt(ds,
                         "SELECT  count(*) \n" +
                         "FROM    INFORMATION_SCHEMA.TABLES\n"+
-                        "WHERE   TABLE_NAME      = '" + FixedSchemaFactory.DIFF_TABLE_NAME.toUpperCase() + "'\n")
+                        "WHERE   TABLE_NAME      = '" + FixedSchemaFactory.COMMIT_TABLE_NAME.toUpperCase() + "'\n")
     }
 
     /**

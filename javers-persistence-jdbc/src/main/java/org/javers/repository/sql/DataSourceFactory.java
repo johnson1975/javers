@@ -1,8 +1,7 @@
-package org.javers.repository.jdbc;
+package org.javers.repository.sql;
 
 import org.javers.common.validation.Validate;
 import org.apache.commons.dbcp.BasicDataSource;
-import org.javers.repository.jdbc.schema.JaversSchemaManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,6 +28,5 @@ public class DataSourceFactory {
         logger.info("creating ConnectionPool for database "+url);
 
         return dataSource;
-
     }
 }

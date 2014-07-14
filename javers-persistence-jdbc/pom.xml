@@ -9,7 +9,7 @@
         <relativePath>..</relativePath>
     </parent>
 
-    <artifactId>javers-persistence-jdbc</artifactId>
+    <artifactId>javers-persistence-sql</artifactId>
     <packaging>jar</packaging>
 
     <name>JaVers JDBC persistence - ${project.version}</name>
